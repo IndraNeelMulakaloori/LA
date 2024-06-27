@@ -1,11 +1,13 @@
-#include<iostream>
-#include<vector>
-#include<algorithm>
-#include<iterator>
-#include<filesystem>
-#include<utility>
-#include<stdexcept>
-#include<string>
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <iterator>
+#include <filesystem>
+#include <utility>
+#include <stdexcept>
+#include <string>
+#include <time.h>
+#include <cstdlib>
 // using namespace std;
 
 #define VVF std::vector<std::vector<double>>
@@ -28,38 +30,49 @@ void info();
 Matrix transpose();
 Matrix mat_mult(Matrix B);
 std::pair<Matrix,Matrix> L_U();
+~ Matrix(){
+    
+}
 };
 Matrix identity(const int &row,const int &col);
 int main(){
-    // #ifndef DEBUG
-    //     freopen("IO/input.txt", "r", stdin);
+    #ifndef DEBUG
+        freopen("IO/input.txt", "r", stdin);
         freopen("IO/output.txt", "w", stdout);
-    // #endif
+    #endif
     
-    // int n,m;
-    // std::cin>>n>>m;
+    int n,m;
+    std::cin>>n>>m;
 
-    // std::cout<<n<<m;
+    VVF data(n,std::vector<double>(m,0));
+    for(int i = 0 ; i < n ; i++){
 
-    // VVF data(n,std::vector<double>(m,0));
-    // for(int i = 0 ; i < n ; i++){
-
-    //         for(int j = 0 ;  j < m ;j++){
-    //             std::cin>>data[i][j];
-    //         }
-    // }
-    
+            for(int j = 0 ;  j < m ;j++){
+                std::cin>>data[i][j];
+            }
+    }
+    // clock_t start, end;
     Matrix A;
-    A.setData({{1.0,2.0,3.0},{4.0,5.0,6.0},{7.0,8.0,9.0}});
+    
+    A.setData(data);
     A.info();
+
     Matrix A_t = A.transpose();
     A_t.info();
-    Matrix mult = A.mat_mult(Matrix({{-1.1,2,-3.4},{3,4,5},{7,8,9}}));
+
+    
+    Matrix mult = A.mat_mult(A_t);
     mult.info();
+
+    // start = clock();
     std::pair<Matrix,Matrix> LU = A.L_U();
+    // end = clock();
+
     LU.first.info();
     LU.second.info();
-    
+
+    // double cpu_time = (double) (end - start) / CLOCKS_PER_SEC * 1000;
+    // std::cout<<"Performance time : "<<cpu_time<<"\n";
     return 0;
 }
 
@@ -163,17 +176,24 @@ return I;
 // Breaks a matrix into Upper triangular and Lower Triangular Matrix
 // Args : 
 // Returns : Pair of LU Matrices
+
 std::pair<Matrix,Matrix> Matrix::L_U(){
 
     //Without Permutation
-    int rows = this->getData().first.first, cols = this->getData().first.second;
 
+    
+    
+    int rows = this->getData().first.first, cols = this->getData().first.second;
     Matrix L(identity(rows,cols).data),U(this->data);
     L.setType("Lower Triangular");
     U.setType("Upper Triangular");
-
+    
     for(int prev_row = 0 ; prev_row < rows ; prev_row++){
         for(int curr_row = prev_row + 1 ; curr_row < rows ; curr_row++){
+                    if (this->getData().second[prev_row][prev_row] == 0.0) {
+                std::cerr << "LU decomposition failed: Zero pivot encountered." << "\n";
+                return {{}, {}};
+            }
                     L.data[curr_row][prev_row] = U.data[curr_row][prev_row]/U.data[prev_row][prev_row];
                     for(int curr_col = prev_row; curr_col < cols ; curr_col++){
                         U.data[curr_row][curr_col] = U.data[curr_row][curr_col] - (L.data[curr_row][prev_row] * U.data[prev_row][curr_col]);
@@ -184,3 +204,6 @@ std::pair<Matrix,Matrix> Matrix::L_U(){
     return {L,U};
 
 }
+
+
+// 

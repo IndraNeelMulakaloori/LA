@@ -1,0 +1,18 @@
+Normal  Matrix   
+1 2 3 
+4 0 5 
+5 6 7 
+Rows : 3
+Cols : 3
+Transposed  Matrix   
+1 4 5 
+2 0 6 
+3 5 7 
+Rows : 3
+Cols : 3
+Dot Product  Matrix   
+14 19 38 
+19 41 55 
+38 55 110 
+Rows : 3
+Cols : 3
