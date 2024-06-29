@@ -24,15 +24,19 @@ void setData(const VVF data);
 void setDim(const int a, const int b);
 void setType(std::string type);
 void info();
-void hstack(const VVF data);
-void vstack(const VVF data);
+void hstack(const Matrix A);
+void vstack(const Matrix A);
 Matrix transpose();
+Matrix arthimetic_operation(Matrix &B, char op);
+Matrix scalar_operation(const double scalar, char op);
+// Matrix operator-(Matrix &B);
 Matrix mat_mult(Matrix B);
 std::pair<Matrix,Matrix> L_U();
 Matrix rref();
 ~ Matrix();
 };
 Matrix identity(const int &row,const int &col);
+Matrix zero_ones(const int row,const int col, char dig);
 
 
 #endif
