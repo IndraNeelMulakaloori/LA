@@ -1,80 +1,10 @@
+
+#include "lalib.h"
 #include <iostream>
-#include <vector>
 #include <algorithm>
 #include <iterator>
-#include <filesystem>
-#include <utility>
 #include <stdexcept>
-#include <string>
-#include <time.h>
-#include <cstdlib>
-// using namespace std;
 
-#define VVF std::vector<std::vector<double>>
-class Matrix{
-
-int __rows, __cols;
-std::string __type = "Normal";
-VVF data;
-
-public:
-Matrix(){
-    
-}
-Matrix(int rows, int cols);
-Matrix(VVF data);
-std::pair<std::pair<int,int>,VVF> getData();
-void setData(VVF data);
-void setType(std::string type);
-void info();
-Matrix transpose();
-Matrix mat_mult(Matrix B);
-std::pair<Matrix,Matrix> L_U();
-~ Matrix(){
-    
-}
-};
-Matrix identity(const int &row,const int &col);
-int main(){
-    #ifndef DEBUG
-        freopen("IO/input.txt", "r", stdin);
-        freopen("IO/output.txt", "w", stdout);
-    #endif
-    
-    int n,m;
-    std::cin>>n>>m;
-
-    VVF data(n,std::vector<double>(m,0));
-    for(int i = 0 ; i < n ; i++){
-
-            for(int j = 0 ;  j < m ;j++){
-                std::cin>>data[i][j];
-            }
-    }
-    // clock_t start, end;
-    Matrix A;
-    
-    A.setData(data);
-    A.info();
-
-    Matrix A_t = A.transpose();
-    A_t.info();
-
-    
-    Matrix mult = A.mat_mult(A_t);
-    mult.info();
-
-    // start = clock();
-    std::pair<Matrix,Matrix> LU = A.L_U();
-    // end = clock();
-
-    LU.first.info();
-    LU.second.info();
-
-    // double cpu_time = (double) (end - start) / CLOCKS_PER_SEC * 1000;
-    // std::cout<<"Performance time : "<<cpu_time<<"\n";
-    return 0;
-}
 
 // Constructors, Getters and Setters
 Matrix::Matrix(int rows, int cols){
@@ -205,5 +135,6 @@ std::pair<Matrix,Matrix> Matrix::L_U(){
 
 }
 
-
-// 
+Matrix::~Matrix(){
+    
+}

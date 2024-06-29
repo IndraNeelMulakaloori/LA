@@ -1,28 +1,44 @@
 # Compiler
-CC = g++
+CXX = g++
 
 # Compiler flags
-CFLAGS = -Wall -Wextra -g -Iinclude  -pedantic 
+CXXFLAGS = -std=gnu++17 -Wall
 
+# Directories
+INCLUDE_DIR = include
+SRC_DIR = src
+MAIN_DIR = main
+BUILD_DIR = build
 
-# Target executable
-TARGET = output
+# Source and object files
+SRC_FILES = $(wildcard $(SRC_DIR)/*.cpp)
+OBJ_FILES = $(SRC_FILES:$(SRC_DIR)/%.cpp=$(BUILD_DIR)/%.o)
+MAIN_FILE = $(MAIN_DIR)/main.cpp
+MAIN_OBJ_FILE = $(BUILD_DIR)/main.o
 
-SRC = src/main.cpp
+# Executable
+EXECUTABLE = $(BUILD_DIR)/output
 
-OBJ = $(SRC:.cpp=.o)
+# Default target
+all: $(EXECUTABLE)
 
-# Default target to build the executable
-all: $(TARGET)
+# Create build directory
+$(BUILD_DIR):
+	mkdir -p $(BUILD_DIR)
 
-# Rule to build the executable from object files
-$(TARGET): $(OBJ)
-	$(CC) $(CFLAGS) -o $(TARGET) $(OBJ) -lm
+# Build object files
+$(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp | $(BUILD_DIR)
+	$(CXX) $(CXXFLAGS) -I$(INCLUDE_DIR) -c $< -o $@
 
-# Rule to build object files from source files
-%.o: %.cpp
-		$(CC) $(CFLAGS) -c $< -o $@
+$(BUILD_DIR)/main.o: $(MAIN_FILE) | $(BUILD_DIR)
+	$(CXX) $(CXXFLAGS) -I$(INCLUDE_DIR) -c $< -o $@
 
-# Clean up build files
+# Build executable
+$(EXECUTABLE): $(OBJ_FILES) $(MAIN_OBJ_FILE)
+	$(CXX) $(CXXFLAGS) -o $@ $^
+
+# Clean build files
 clean:
-		rm -f $(TARGET) $(OBJ)
+	rm -rf $(BUILD_DIR)
+
+.PHONY: all clean
