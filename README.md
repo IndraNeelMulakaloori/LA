@@ -13,3 +13,5 @@ Features:
 Future List:
 - Orthogonalisation and Determinant finding of a matrix
 - Parallel computation to optimise performance
+
+For details , check `include/lalib.h` about implementation of Mat operations 
