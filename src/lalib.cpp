@@ -17,17 +17,18 @@ Matrix::Matrix(int rows, int cols){
 
 Matrix::Matrix(VVF data){
                this->setData(data);
-               
 }
 
 std::pair<std::pair<int,int>,VVF> Matrix::getData(){
     return {{this->__rows,this->__cols},this->data};
 }
-void Matrix::setData(VVF data){
-    std::copy(data.begin(),data.end(),std::back_inserter(this->data));
-               __rows = this->data.size();
-               __cols = this->data[0].size();
-
+void Matrix::setData(const VVF data){
+    this->data = data;
+    this->setDim(this->data.size(), this->data[0].size()) ;
+}
+void Matrix::setDim(const int row, const int col){
+                __rows = row;
+                __cols = col;
 }
 void Matrix::setType(std::string type){
     __type = type;
@@ -47,7 +48,25 @@ void Matrix::info(){
 
     
 }
+void Matrix::vstack(const VVF data){
+    if(__cols != (int) data[0].size())
+        throw invalid_argument("Matrices must have the same number of columns for horizontal stacking.");
+    std::copy(data.begin(),data.end(),std::back_inserter(this->data));
+    this->setDim(this->data.size(), this->data[0].size());
+    this->setType("Vertical Stacked");
+}
+void Matrix::hstack(const VVF data){
+    if (__rows != (int) data[0].size()) {
+        throw invalid_argument("Matrices must have the same number of rows for horizontal stacking.");
+    }
 
+    for(size_t i = 0 ; i < data.size() ; i++)
+    this->data[i].insert(this->data[i].end(), data[i].begin(),data[i].end());
+
+    this->setDim(this->data.size(), this->data[0].size());
+    this->setType("Horizontal Stacked");
+
+}
 Matrix Matrix::transpose(){
     //For Square Matrices
     Matrix A_transpose(__cols,__rows);
@@ -120,10 +139,10 @@ std::pair<Matrix,Matrix> Matrix::L_U(){
     
     for(int prev_row = 0 ; prev_row < rows ; prev_row++){
         for(int curr_row = prev_row + 1 ; curr_row < rows ; curr_row++){
-                    if (this->getData().second[prev_row][prev_row] == 0.0) {
-                std::cerr << "LU decomposition failed: Zero pivot encountered." << "\n";
-                return {{}, {}};
-            }
+            //         if (this->getData().second[prev_row][prev_row] == 0.0) {
+            //     std::cerr << "LU decomposition failed: Zero pivot encountered." << "\n";
+            //     return {{}, {}};
+            // }
                     L.data[curr_row][prev_row] = U.data[curr_row][prev_row]/U.data[prev_row][prev_row];
                     for(int curr_col = prev_row; curr_col < cols ; curr_col++){
                         U.data[curr_row][curr_col] = U.data[curr_row][curr_col] - (L.data[curr_row][prev_row] * U.data[prev_row][curr_col]);
@@ -134,7 +153,34 @@ std::pair<Matrix,Matrix> Matrix::L_U(){
     return {L,U};
 
 }
+Matrix Matrix::rref(){
+          std::pair<Matrix, Matrix> row_reduction = this->L_U();
 
+          int __r = row_reduction.second.getData().first.first;
+          int __c = row_reduction.second.getData().first.second;
+          VVF data = row_reduction.second.getData().second;
+
+          for(int diag = std::min(__r,__c) - 1 ; diag > 0 ; diag--){
+            if(data[diag][diag] != 0){
+                for(int col = diag + 1 ; __c < col ; col++){
+                    data[diag][col] /= data[diag][diag];
+                }
+                data[diag][diag] = 1.0;
+
+                for(int row = diag - 1 ; row >= 0 ; row--){
+                    double factor = data[row][diag];
+                    data[row][diag] -=  (factor * data[diag][diag]);
+                }
+            }
+          }
+
+          Matrix rr = Matrix(data);
+          rr.setType("Reduced Row Echleon");
+
+    
+    return rr;
+
+}
 Matrix::~Matrix(){
     
 }
