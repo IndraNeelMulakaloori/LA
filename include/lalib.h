@@ -33,6 +33,7 @@ Matrix scalar_operation(const double scalar, char op);
 Matrix mat_mult(Matrix B);
 std::pair<Matrix,Matrix> L_U();
 Matrix rref();
+Matrix inverse();
 ~ Matrix();
 };
 Matrix identity(const int &row,const int &col);

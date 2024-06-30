@@ -65,13 +65,13 @@ Matrix Matrix::transpose(){
 // Use +, - or * to perform arthimetic operations on Matrices;
 Matrix Matrix::arthimetic_operation(Matrix &B, char op){
     if(this->getData().first != B.getData().first)
-    throw invalid_argument ("Dimensions aren't sufficent for operation " + op);
+    throw invalid_argument ("shape aren't sufficent for operation " + op);
 
-    auto __dimensions = this->getData().first;
-    Matrix result(__dimensions.first,__dimensions.second);
+    auto __shape = this->getData().first;
+    Matrix result(__shape.first,__shape.second);
 
-    for(int row = 0 ; row < __dimensions.first ; row++){
-        for(int col = 0 ; col < __dimensions.second ; col++){
+    for(int row = 0 ; row < __shape.first ; row++){
+        for(int col = 0 ; col < __shape.second ; col++){
             // result.data[row][col] = this->data[row][col] + B.data[row][col];
             switch (op){
                 case '+':
@@ -97,11 +97,11 @@ Matrix Matrix::arthimetic_operation(Matrix &B, char op){
 // Use * or / for scalar operations on Matrices;
 Matrix Matrix::scalar_operation(const double scalar , char op){
 
-        auto __dimensions = this->getData().first;
-        Matrix result(__dimensions.first,__dimensions.second);
+        auto __shape = this->getData().first;
+        Matrix result(__shape.first,__shape.second);
 
-         for(int row = 0 ; row < __dimensions.first ; row++){
-        for(int col = 0 ; col < __dimensions.second ; col++){
+         for(int row = 0 ; row < __shape.first ; row++){
+        for(int col = 0 ; col < __shape.second ; col++){
             // result.data[row][col] = this->data[row][col] + B.data[row][col];
             switch (op){
                 case '*':
@@ -132,7 +132,7 @@ Matrix Matrix::mat_mult(Matrix B){
     try{
         //if A.cols != B.rows 
          if ((*this).getData().first.second != B.getData().first.second)
-        throw "Matrix dimensions doesn't fit in matrix Multiplication \n A.cols != B.rows" ;
+        throw "Matrix shape doesn't fit in matrix Multiplication \n A.cols != B.rows" ;
 
     else{
          for(int row = 0 ; row < this->getData().first.first ; row++){
@@ -208,7 +208,7 @@ std::pair<Matrix,Matrix> Matrix::L_U(){
 
 void Matrix::vstack(Matrix A){
     if(__cols != (int) A.getData().second[0].size())
-        throw invalid_argument("Matrices must have the same number of columns for horizontal stacking.");
+        throw invalid_argument("Matrices must have the same number of columns for vertical stacking.");
     VVF data = A.getData().second;
     std::copy(data.begin(),data.end(),std::back_inserter(this->data));
     this->setDim(this->data.size(), this->data[0].size());
@@ -265,6 +265,25 @@ Matrix Matrix::rref(){
     
     return rr;
 
+}
+Matrix Matrix::inverse(){
+    std::pair<int,int> __shape = this->getData().first;
+
+    this->hstack(identity(__shape.first,__shape.second));
+
+    VVF row_reduction_data = this->rref().getData().second;
+    __shape = this->getData().first;
+    VVF inverse_data(__shape.first,std::vector<double>(__shape.second/2));
+
+    
+    for(int row = 0 ; row < __shape.first ; row++)
+        std::copy(row_reduction_data[row].begin() + __shape.second/2, row_reduction_data[row].end(), inverse_data[row].begin());
+    
+    // Create the inverse matrix object
+    Matrix inverse_matrix(inverse_data);
+    inverse_matrix.setType("Inverse");  // Set the type here
+
+    return inverse_matrix;
 }
 Matrix::~Matrix(){
     

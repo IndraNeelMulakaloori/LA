@@ -1,6 +1,6 @@
 #include <iostream>
 #include <vector>
-
+#include <algorithm>
 #include "lalib.h"
 
 int main(){
@@ -55,12 +55,7 @@ int main(){
     // double cpu_time = (double) (end - start) / CLOCKS_PER_SEC * 1000;
     // std::cout<<"Performance time : "<<cpu_time<<"\n";
     
-
-    A.hstack(identity(3,3));
-    A.info();
-    Matrix row_reduction = A.rref();
-    row_reduction.info();
-    
-
+    Matrix inverse = A.inverse();
+    inverse.info();
     return 0;
 }
