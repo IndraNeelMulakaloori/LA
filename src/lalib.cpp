@@ -65,7 +65,7 @@ Matrix Matrix::transpose(){
 // Use +, - or * to perform arthimetic operations on Matrices;
 Matrix Matrix::arthimetic_operation(Matrix &B, char op){
     if(this->getData().first != B.getData().first)
-    throw invalid_argument ("shape aren't sufficent for operation " + op);
+    throw std::invalid_argument ("shape aren't sufficent for operation " + op);
 
     auto __shape = this->getData().first;
     Matrix result(__shape.first,__shape.second);
@@ -208,7 +208,7 @@ std::pair<Matrix,Matrix> Matrix::L_U(){
 
 void Matrix::vstack(Matrix A){
     if(__cols != (int) A.getData().second[0].size())
-        throw invalid_argument("Matrices must have the same number of columns for vertical stacking.");
+        throw std::invalid_argument("Matrices must have the same number of columns for vertical stacking.");
     VVF data = A.getData().second;
     std::copy(data.begin(),data.end(),std::back_inserter(this->data));
     this->setDim(this->data.size(), this->data[0].size());
@@ -216,7 +216,7 @@ void Matrix::vstack(Matrix A){
 }
 void Matrix::hstack(Matrix A){
     if (__rows != (int) A.getData().second[0].size()) {
-        throw invalid_argument("Matrices must have the same number of rows for horizontal stacking.");
+        throw std::invalid_argument("Matrices must have the same number of rows for horizontal stacking.");
     }
     VVF data = A.getData().second;
 

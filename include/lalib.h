@@ -4,7 +4,6 @@
 #include <vector>
 #include <string>
 #include <utility>
-using namespace std;
 
 #define VVF std::vector<std::vector<double>>
 class Matrix{
@@ -38,6 +37,5 @@ Matrix inverse();
 };
 Matrix identity(const int &row,const int &col);
 Matrix zero_ones(const int row,const int col, char dig);
-
 
 #endif
