@@ -2,62 +2,45 @@ Normal  Matrix
 1   2   3   
 4   5   6   
 7   8   9   
-Rows : 3
+10   11   12   
+Rows : 4
 Cols : 3
-Transposed  Matrix   
-1   4   7   
-2   5   8   
-3   6   9   
-Rows : 3
-Cols : 3
-Dot Product  Matrix   
-14   32   50   
-32   77   122   
-50   122   194   
-Rows : 3
-Cols : 3
-Lower Triangular  Matrix   
-1   0   0   
-4   1   0   
-7   2   1   
-Rows : 3
-Cols : 3
-Upper Triangular  Matrix   
-1   2   3   
-0   -3   -6   
-0   0   0   
-Rows : 3
-Cols : 3
+Rank : 2
+Nullity: 2
+Normal  Matrix   
+5   
+-2   
+9   
+11   
+Rows : 4
+Cols : 1
+Rank : 1
+Nullity: 3
 Reduced Row Echleon  Matrix   
-1   0   -1   
-0   1   2   
-0   0   0   
-Rows : 3
-Cols : 3
+1   0   -1   0   
+0   1   2   0   
+0   0   0   0   
+0   0   0   1   
+Rows : 4
+Cols : 4
+Rank : 2
+Nullity: 2
 Normal  Matrix   
 1   2   3   
 4   5   6   
 7   8   9   
-Rows : 3
+10   11   12   
+Rows : 4
 Cols : 3
-Horizontal Stacked  Matrix   
-1   2   3   1   2   3   
-4   5   6   4   5   6   
-7   8   9   7   8   9   
-Rows : 3
-Cols : 6
-Vertical Stacked  Matrix   
-1   2   3   
-4   5   6   
-7   8   9   
--1   -1   -2   
--3   -4   -5   
--27   -8   -9.25   
-Rows : 6
+Rank : 2
+Nullity: 2
+Reduced Row Echleon  Matrix   
+1   0   -1   
+0   1   2   
+0   0   0   
+0   0   0   
+Rows : 4
 Cols : 3
-Inverse  Matrix   
--1.66667   0.666667   0   
-1.33333   -0.333333   -0   
-1   -2   1   
-Rows : 3
-Cols : 3
+Rank : 2
+Nullity: 2
+Rank : 2  Nullity : 2

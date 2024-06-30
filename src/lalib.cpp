@@ -4,12 +4,24 @@
 #include <algorithm>
 #include <iterator>
 #include <stdexcept>
+#include <cmath>
 
+double sanitize(double value) {
+    if (std::isnan(value)) {
+        return 0.0;
+    }
+    if (value == -0.0) {
+        return 0.0;
+    }
+    return value;
+}
 
 // Constructors, Getters and Setters
 Matrix::Matrix(int rows, int cols){
     __rows = rows;
     __cols = cols;
+    __rank = rows;
+    __nullity = 0;
     this->data.resize(__rows,std::vector<double>(__cols));
    
 
@@ -19,7 +31,7 @@ Matrix::Matrix(VVF data){
                this->setData(data);
 }
 
-std::pair<std::pair<int,int>,VVF> Matrix::getData(){
+std::pair<IP,VVF> Matrix::getData(){
     return {{this->__rows,this->__cols},this->data};
 }
 void Matrix::setData(const VVF data){
@@ -29,11 +41,30 @@ void Matrix::setData(const VVF data){
 void Matrix::setDim(const int row, const int col){
                 __rows = row;
                 __cols = col;
+                __rank = __rows;
+                __nullity = 0;
 }
 void Matrix::setType(std::string type){
     __type = type;
 }
+IP Matrix::getRank(){
 
+        VVF reduced_row_data = this->rref().data;
+        int rows = this->__rows , cols = this->__cols;
+
+        std::vector<double> zero_row(cols,0.0);
+        this->__rank = rows , this->__nullity = 0;
+
+        for(int row = 0 ; row < rows ; row++)
+            if (reduced_row_data[row] == zero_row){
+                this->__rank = row ;
+                this->__nullity = rows - this->__rank;
+                break;
+            }
+
+    return {this->__rank,this ->__nullity};
+
+}
 //Info Regarding the Matrix
 void Matrix::info(){
     std::cout<<this->__type<<"  Matrix   \n";
@@ -45,6 +76,13 @@ void Matrix::info(){
     }
     std::cout<<"Rows : "<<__rows<<"\n";
     std::cout<<"Cols : "<<__cols<<"\n";
+
+    IP rank = getRank();
+
+    std::cout<<"Rank : "<<rank.first<<"\n";
+    std::cout<<"Nullity: "<<rank.second<<"\n";
+
+
 
     
 }
@@ -201,29 +239,47 @@ std::pair<Matrix,Matrix> Matrix::L_U(){
                     }
         }
     }
-
+            for (auto& row : data) {
+        for (auto& element : row) {
+            element = sanitize(element);
+        }
+    }
     return {L,U};
 
 }
 
-void Matrix::vstack(Matrix A){
-    if(__cols != (int) A.getData().second[0].size())
+Matrix Matrix::vstack(Matrix B){
+    if(__cols != B.getData().first.second){
         throw std::invalid_argument("Matrices must have the same number of columns for vertical stacking.");
-    VVF data = A.getData().second;
-    std::copy(data.begin(),data.end(),std::back_inserter(this->data));
-    this->setDim(this->data.size(), this->data[0].size());
-    this->setType("Vertical Stacked");
+    }
+
+    VVF data_1 = this->getData().second;
+    VVF data_2 = B.getData().second;
+
+    std::copy(data_2.begin(),data_2.end(),std::back_inserter(data_1));
+    
+    Matrix result(data_1);
+    result.setType("Vertical Stacked");
+
+    return result;
 }
-void Matrix::hstack(Matrix A){
-    if (__rows != (int) A.getData().second[0].size()) {
+/// Change Hstack to retun Matrix
+Matrix Matrix::hstack(Matrix B){
+    if (__rows != B.getData().first.first) {
         throw std::invalid_argument("Matrices must have the same number of rows for horizontal stacking.");
     }
-    VVF data = A.getData().second;
+
+    VVF data_1 = this->getData().second;
+    VVF data_2 = B.getData().second;
 
     for(size_t i = 0 ; i < data.size() ; i++)
-    this->data[i].insert(this->data[i].end(), data[i].begin(),data[i].end());
-    this->setDim(this->data.size(), this->data[0].size());
-    this->setType("Horizontal Stacked");
+    data_1[i].insert(data_1[i].end(), data_2[i].begin(),data_2[i].end());
+
+    Matrix result(data_1);
+    result.setType("Horizonatal stacked");
+
+    return result;
+    
 
 }
 
@@ -252,22 +308,29 @@ Matrix Matrix::rref(){
                 for(int row = diag - 1 ; row >= 0 ; row--){
                     double factor = data[row][diag];
 
-                    for(int col = diag ; col < __c ; col++)
-                    data[row][col] -=  (factor * data[diag][col]);
+                    for(int col = diag ; col < __c ; col++){
+                        data[row][col] = data[row][col] -  (factor * data[diag][col]);
+                    }
+                        
                 }
             }
           }
+            for (auto& row : data) {
+                for (auto& element : row) {
+                  element = sanitize(element);
+                      }
+                }
 
 
-          Matrix rr = Matrix(data);
-          rr.setType("Reduced Row Echleon");
 
-    
+            Matrix rr = Matrix(data);
+            rr.setType("Reduced Row Echleon");
+
     return rr;
 
 }
 Matrix Matrix::inverse(){
-    std::pair<int,int> __shape = this->getData().first;
+    IP __shape = this->getData().first;
 
     this->hstack(identity(__shape.first,__shape.second));
 
@@ -285,6 +348,22 @@ Matrix Matrix::inverse(){
 
     return inverse_matrix;
 }
+Matrix Matrix::A_b(Matrix b, const bool rref){
+
+    
+    Matrix soln = this->hstack(b);
+    soln.setType("Solution");
+    if(rref){
+        soln = soln.rref();
+    }  else{
+
+        soln = soln.L_U().second;
+    }
+    return soln;
+
+}
+
 Matrix::~Matrix(){
     
 }
+
