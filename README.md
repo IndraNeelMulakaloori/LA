@@ -11,9 +11,9 @@ Features:
 - LU Decompostion with partial pivoting
 - Vstack, Hstack, identity, zero/one matrices
 - **rref** or Reduced-row echeleon form  of a matrix
-<!-- - Can find inverse with vstack and rref (will be implementing)
-- Solving Ax =b and Ax =0 with stacking
-- Rank, Nullity of a matrix -->
+- Inverse of a matrix
+- Rank & Nullity of a matrix
+- Sanitization of matrix to avoid -0, -nan and nan.
 
 Future List:
 - Orthogonalisation and Determinant finding of a matrix
