@@ -2,7 +2,6 @@
 
 **CLA** sounds like **Claw**  is a C++ Linear algebra library built for numerical computation of vectors and matrices
 
-- OOPs is implemented
 
 Features:
 - CRUD of a Matrix data structure
